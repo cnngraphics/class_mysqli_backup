@@ -18,6 +18,7 @@ $dbBackup	=	new DatabaseBackup();
 $tables	=	'*';
 $dbBackup->backupDatabase($tables,'BackupLogs');
 
+//DB RDNS config section
 class DatabaseBackup{
 	private $hostname		=	''; /* DB Hostname */
 	private $username		=	''; /* DB Username */
@@ -124,3 +125,27 @@ class DatabaseBackup{
 		
 	}
 	
+	/* Function used to Log the Database */
+	private function logDatabase($sql,$backupDirectory = ''){
+		if(!$sql){
+			return false;
+		}
+		
+		if(!file_exists($backupDirectory)){
+			if(mkdir($backupDirectory)){
+				$filename	=	'log_'.$this->database.date('Y-m-d_H-i-s');
+				$fileHandler	=	fopen($backupDirectory.'/'.$filename.'.sql','w+');
+				fwrite($fileHandler,$sql);
+				fclose($fileHandler);
+				return true;
+			}
+		}else{
+			$filename	=	'log_'.$this->database.date('Y-m-d_H-i-s');
+			$fileHandler	=	fopen($backupDirectory.'/'.$filename.'.sql','w+');
+			fwrite($fileHandler,$sql);
+			fclose($fileHandler);
+			return true;
+		}	
+		return false;
+	}
+}
